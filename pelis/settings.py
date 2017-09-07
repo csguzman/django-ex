@@ -26,10 +26,10 @@ print("base dir path", BASE_DIR)
 SECRET_KEY = '4yn(7ug@z9bflvd6*)_e-*j7+##1h9r13dgz_@$2hjq#c*-rce'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['pelis-pelis.193b.starter-ca-central-1.openshiftapps.com']
-# ALLOWED_HOSTS = ['0.0.0.0', '10.0.2.2']
+# ALLOWED_HOSTS = ['pelis-pelis.193b.starter-ca-central-1.openshiftapps.com']
+ALLOWED_HOSTS = ['0.0.0.0', '10.0.2.2']
 
 
 # Application definition
