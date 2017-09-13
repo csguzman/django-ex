@@ -1,1 +1,2 @@
 OPENSHIFT_DATA_DIR=/opt/app-root/src/data
+OPENSHIFT_APP_DNS=*
