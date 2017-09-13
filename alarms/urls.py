@@ -6,6 +6,7 @@ from . import views
 router = DefaultRouter()
 router.register(r'device/apns', TvAlarmApnsDeviceViewSet)
 router.register(r'device/gcm', TvAlarmDeviceViewSet)
+router.register(r'admin', TvAlarmDeviceViewSet)
 
 urlpatterns = (url(r'^', include(router.urls)),
                url(r'device/post_tweet', views.post_tweet_view),
