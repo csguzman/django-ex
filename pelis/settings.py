@@ -31,9 +31,9 @@ SECRET_KEY = '4yn(7ug@z9bflvd6*)_e-*j7+##1h9r13dgz_@$2hjq#c*-rce'
 DEBUG = True
 
 # ALLOWED_HOSTS = ['pelis-pelis.193b.starter-ca-central-1.openshiftapps.com']
-ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
+# ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
 # ALLOWED_HOSTS = ['0.0.0.0', '10.0.2.2']
-# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
