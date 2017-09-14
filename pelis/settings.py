@@ -183,7 +183,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 PUSH_NOTIFICATIONS_SETTINGS = {
         "GCM_API_KEY": " AIzaSyAf8zKAtvtC4f7Us5I-cigfwTWiJIesEK4",
-        "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'OnlyMoviesDebugNoPass.pem'),
+        "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'OnlyMoviesRelease.pem'),
         "GCM_ERROR_TIMEOUT": 60,
 }
 
