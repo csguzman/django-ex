@@ -121,10 +121,7 @@ class Command(BaseCommand):
 
         req = Request('https://programacion-tv.elpais.com/data/parrilla_%s.json'
                       % today_date,
-                      headers={'User-Agent': 'Mozilla/5.0',
-                               'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                               'Accept-Encoding': 'gzip, deflate, sdch, br',
-                               })
+                      headers={'User-Agent': 'Mozilla/5.0'})
 
         response = urlopen(req)
 
@@ -178,19 +175,11 @@ class Command(BaseCommand):
         for movie in all_movies:
             group_id = int(int(movie.id_programa) / 10000)
 
-            if movie.id_programa == '191961':
+            if movie.get_visible_title() != "":
 
                 req = Request('https://programacion-tv.elpais.com/data/programas/%s.json'
                               % group_id,
-                              headers={'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.36',
-                                       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                                       'Accept-Encoding': 'gzip, deflate, sdch, br',
-                                       'accept-language': 'en-US,en;q=0.8',
-                                       'referer': 'https://hide.me/es/proxy',
-                                       'upgrade-insecure-requests': '1',
-                                       'cache-control': 'max-age=0',
-                                       'if-modified-since': 'Tue, 3 Jan 2017 11:05:09 GMT'
-                                       })
+                              headers={'User-Agent': 'Mozilla/5.0'})
 
                 response = urlopen(req)
 
