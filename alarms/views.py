@@ -26,3 +26,4 @@ def send_push_post_tweet(request):
         if user is not None:
             if user.is_superuser:
                 call_command('sendpush_and_post_tweet')
+                return HttpResponse(status=200)
