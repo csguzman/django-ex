@@ -121,8 +121,7 @@ class Command(BaseCommand):
 
         req = Request('https://programacion-tv.elpais.com/data/parrilla_%s.json'
                       % today_date,
-                      headers={'User-Agent': 'Mozilla/5.0',
-                               'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'})
+                      headers={'User-Agent': 'Mozilla/5.0'})
 
         response = urlopen(req)
 
