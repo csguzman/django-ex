@@ -12,4 +12,5 @@ urlpatterns = (url(r'^', include(router.urls)),
                url(r'^admin/', include(admin.site.urls)),
                url(r'device/send_push_post_tweet', views.send_push_post_tweet),
                url(r'device/post_tweet', views.post_tweet_view),
-               url(r'device/send_push', views.send_push_view), )
+               url(r'device/send_push', views.send_push_view),
+               url(r'program_details', views.get_program_details),)
