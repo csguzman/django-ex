@@ -61,3 +61,36 @@ class Program:
             return self.title
         else:
             return self.name
+
+
+class ProgramDetails:
+    def __init__(self, id_programa):
+        self.id_programa = id_programa
+        self.actors = ''
+        self.artistic = '0'
+        self.commercial = '0'
+        self.country = ''
+        self.creator = ''
+        self.description = ''
+        self.director = ''
+        self.duration = ''
+        self.episode = ''
+        self.episode_description = ''
+        self.episode_title = ''
+        self.guest_actors = ''
+        self.image = ''
+        self.music = ''
+        self.photography = ''
+        self.poster = ''
+        self.presented_by = ''
+        self.producer = ''
+        self.production = ''
+        self.script = ''
+        self.season = ''
+        self.title = ''
+        self.total_episodes = ''
+        self.txtParental = ''
+        self.txt_genre = ''
+        self.txt_section = ''
+        self.txt_subgenre = ''
+        self.year = ''
