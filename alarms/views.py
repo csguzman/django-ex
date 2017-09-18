@@ -3,6 +3,7 @@ from django.core.management import call_command
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
+from urllib.request import Request, urlopen, URLError, HTTPError, urlretrieve
 from alarms.objects import ProgramDetails
 from datetime import datetime, timezone
 import json
