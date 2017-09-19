@@ -28,7 +28,7 @@ print("data dir path", DATA_DIR)
 SECRET_KEY = '4yn(7ug@z9bflvd6*)_e-*j7+##1h9r13dgz_@$2hjq#c*-rce'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ['pelis-pelis.193b.starter-ca-central-1.openshiftapps.com']
 # ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
