@@ -44,13 +44,22 @@ class Command(BaseCommand):
         # self.stdout.write("%s -> %s -> %s" % (program.programTitle, program.startDateTime, program.channel))
         # gcm_message += str("%s -> %s -> %s\n" % (program.program_title, program.start_datetime, program.channel))
 
-        message_title = '%s, a las %s' % (all_programs[0].get_visible_title(), all_programs[0].iniDate)
-
-        channelName = self.channel_list_json[all_programs[0].idCanal]["nombre"]
         fmt = '%Y-%m-%d %H:%M:%S'
         ini_datetime = datetime.strptime(all_programs[0].iniDate, fmt)
+
+        message_title = '%s, a las %s:%s' % (all_programs[0].get_visible_title(),
+                                             ('%02d' % ini_datetime.hour),
+                                             ('%02d' % ini_datetime.minute))
+
+        channelName = self.channel_list_json[all_programs[0].idCanal]["nombre"]
+
         program_image = self.image_url % all_programs[0].image
-        tweet = '%s, a las %s:%s, en %s. %s. %s' % (all_programs[0].get_visible_title(), ini_datetime.hour, ini_datetime.minute, channelName, 'goo.gl/wF3hxM', 'goo.gl/DB0KcB ')
+        tweet = '%s, a las %s:%s, en %s. %s.' % (all_programs[0].get_visible_title(),
+                                                 ('%02d' % ini_datetime.hour),
+                                                 ('%02d' % ini_datetime.minute),
+                                                 channelName,
+                                                 'https://pelisdeldiaco78.app.link/?programId=%s' %
+                                                 all_programs[0].id_programa)
 
         self.post_tweet(program_image, tweet)
         self.stdout.write(json_string)
