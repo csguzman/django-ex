@@ -21,16 +21,10 @@ def send_push_view(request):
     return HttpResponse(status=200)
 
 
-@csrf_exempt
+@user_passes_test(lambda u: u.is_superuser)
 def send_push_post_tweet(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_superuser:
-                call_command('sendpush_and_post_tweet')
-                return HttpResponse(status=200)
+    call_command('sendpush_and_post_tweet')
+    return HttpResponse(status=200)
 
 
 def get_program_details(request):
