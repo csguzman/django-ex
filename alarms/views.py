@@ -11,20 +11,31 @@ import json
 
 @user_passes_test(lambda u: u.is_superuser)
 def post_tweet_view(request):
-    call_command('post_tweet')
+    execute_in_background('post_tweet')
     return HttpResponse(status=200)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def send_push_view(request):
-    call_command('sendpush')
+    execute_in_background('sendpush')
     return HttpResponse(status=200)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def send_push_post_tweet(request):
-    call_command('sendpush_and_post_tweet')
+    execute_in_background('sendpush_and_post_tweet')
     return HttpResponse(status=200)
+
+
+def execute_command(command_name):
+    call_command(command_name)
+
+
+def execute_in_background(command_name):
+    import threading
+    t = threading.Thread(target=execute_command, args=command_name, kwargs={})
+    t.setDaemon(True)
+    t.start()
 
 
 def get_program_details(request):
