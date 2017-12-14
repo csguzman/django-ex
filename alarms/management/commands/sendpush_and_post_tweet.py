@@ -180,7 +180,7 @@ class Command(BaseCommand):
 
         programs_array = []
         for movie in all_movies:
-            group_id = int(int(movie.id_programa) / 10000)
+            group_id = int(movie.idCanal)
 
             if movie.get_visible_title() != "":
 

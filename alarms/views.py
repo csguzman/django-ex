@@ -27,17 +27,28 @@ def send_push_post_tweet(request):
     return HttpResponse(status=200)
 
 
-def execute_command(command_name):
-    call_command(command_name)
+@user_passes_test(lambda u: u.is_superuser)
+def do_push_and_tweet(request):
+    parameter = json.dumps(request.GET)
+    execute_in_background('do_push_and_tweet', parameter)
+    return HttpResponse(status=200)
 
 
-def execute_in_background(command_name):
+def execute_command(command_name, parameter):
+    if parameter:
+        call_command(command_name, parameter)
+    else:
+        call_command(command_name)
+
+
+def execute_in_background(command_name, parameter=None):
     import threading
-    t = threading.Thread(target=execute_command, args=(command_name,), kwargs={})
+    t = threading.Thread(target=execute_command, args=(command_name, parameter,), kwargs={})
     t.setDaemon(True)
     t.start()
 
 
+# TODO: needs fixing!
 def get_program_details(request):
     program_id = request.GET.get('programId')
 
