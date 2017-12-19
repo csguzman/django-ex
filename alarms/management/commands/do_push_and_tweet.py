@@ -1,11 +1,11 @@
-from django.core.management.base import BaseCommand, CommandError
-from push_notifications.models import GCMDevice, APNSDevice
-from django.conf import settings
-from urllib.request import Request, urlopen, URLError, HTTPError, urlretrieve
-from alarms.objects import Channel, Program
-from datetime import datetime, timezone
 import json
+from urllib.request import urlopen, HTTPError
+
 import tweepy
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from alarms.models import TvGCMDevice, TvAPNSDevice
 
 
 class Command(BaseCommand):
@@ -27,26 +27,25 @@ class Command(BaseCommand):
         parameter_str = options['parameter'][0]
         self.stdout.write('parameters:  %s' % parameter_str)
         parameter_json = json.loads(parameter_str)
-
-        title = parameter_json['title']
-        id_programa = parameter_json['id_programa']
+        title = parameter_json['TITULO']
+        id_programa = parameter_json['EVENTO']
         channelName = parameter_json['channelName']
         start_time = parameter_json['startTime']
-        idCanal = parameter_json['idCanal']
         image = parameter_json['image']
 
+        parameter_json["URL"] += '&id=%s' % id_programa
         message_title = '%s, a las %s' % (title, start_time)
 
         tweet = '%s, a las %s, en %s. %s.' % (title, start_time, channelName,
                                               'https://pelisdeldiaco78.app.link/?programId=%s' % id_programa)
         self.post_tweet(image, tweet)
 
-        for device in GCMDevice.objects.all():
+        for device in TvGCMDevice.objects.filter(version__gte=25):
             # self.stdout.write(device.registration_id)
             if device.registration_id != "BLACKLISTED":
                 device.send_message(parameter_str)
 
-        for device in APNSDevice.objects.all():
+        for device in TvAPNSDevice.objects.filter(version__gte=25):
             device.send_message(message_title, sound='default', extra={"message": parameter_str})
 
     def get_twitter_api(self, cfg):
