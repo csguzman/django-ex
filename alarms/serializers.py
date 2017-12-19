@@ -4,11 +4,12 @@ from push_notifications.models import GCMDevice, APNSDevice
 from push_notifications.api.rest_framework import GCMDeviceSerializer, APNSDeviceSerializer
 import logging
 
+from alarms.models import TvAPNSDevice, TvGCMDevice
+
+
 class TvAlarmDeviceSerializer(GCMDeviceSerializer):
 
     #device_id_hex = serializers.CharField(source='device_id', read_only=True)
-
-
 
     def validate(self, attrs):
             """
@@ -32,7 +33,7 @@ class TvAlarmDeviceSerializer(GCMDeviceSerializer):
     #     return hex(value)
 
     class Meta:
-        model = GCMDevice
+        model = TvGCMDevice
         fields = '__all__'
 
 
@@ -61,7 +62,7 @@ class TvAlarmApnsDeviceSerializer(APNSDeviceSerializer):
             return attrs
 
     class Meta:
-        model = APNSDevice
+        model = TvAPNSDevice
         fields = '__all__'
 
 
