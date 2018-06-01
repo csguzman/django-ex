@@ -6,7 +6,6 @@ whitenoise==3.0
 appdirs==1.4.3
 certifi==2017.4.17
 chardet==3.0.4
-pywebpush==1.4.0
 Django==2.0.5
 django-push-notifications==1.6.0
 djangorestframework==3.8.2
