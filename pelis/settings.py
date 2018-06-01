@@ -41,7 +41,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -51,21 +50,20 @@ INSTALLED_APPS = (
     'push_notifications',
     'rest_framework',
     'alarms',
+    'django.contrib.admin',
     # 'debug_toolbar',
     # 'welcome',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-)
+]
 
 ROOT_URLCONF = 'pelis.urls'
 
@@ -201,9 +199,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # CUSTOM CONFIG
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "GCM_API_KEY": " AIzaSyAf8zKAtvtC4f7Us5I-cigfwTWiJIesEK4",
+        "GCM_API_KEY": "AIzaSyAf8zKAtvtC4f7Us5I-cigfwTWiJIesEK4",
         "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'OnlyMoviesRelease.pem'),
+        "APNS_TOPIC": "com.csalguero.onlymovies",
         "GCM_ERROR_TIMEOUT": 60,
+        "FCM_API_KEY": "AIzaSyAw7-rshsLa47Ed3r0anQOUI0BOwHNKjAI",
+        "FCM_ERROR_TIMEOUT": 60,
 }
 
 REST_FRAMEWORK = {

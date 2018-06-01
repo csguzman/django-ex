@@ -1,5 +1,6 @@
 import json
 from urllib.request import urlopen, HTTPError
+import requests
 
 import tweepy
 from django.conf import settings
@@ -13,6 +14,8 @@ class Command(BaseCommand):
     channel_list_json = None
     default_channels = ['La 1', 'La 2', 'Antena 3', 'Cuatro', 'Telecinco', 'laSexta', 'Teledeporte', 'Clan TVE', 'Canal 24 horas', 'Nova', 'Neox', 'Mega', 'FDF Telecinco', 'Energy', 'Divinity', 'Boing', 'Disney Channel', 'Intereconomía TV', 'Paramount Channel', '13tv', 'Discovery MAX', 'Atreseries', 'Be Mad']
     image_url = 'https://programacion-tv.elpais.com/%s'
+
+    dynamic_link_json = "{\"dynamicLinkInfo\": {\"dynamicLinkDomain\": \"e2ays.app.goo.gl\",\"link\": \"https://pelisdeldia.com/?programId=%s\",\"androidInfo\": {\"androidPackageName\": \"com.csalguero.onlymovies\",\"androidFallbackLink\": \"https://play.google.com/store/apps/details?id=com.csalguero.onlymovies\"},\"iosInfo\": {\"iosBundleId\": \"com.csalguero.onlymovies\",\"iosFallbackLink\": \"https://itunes.apple.com/es/app/apple-store/id1235072016\",\"iosAppStoreId\": \"1235072016\"}},\"suffix\": {\"option\": \"SHORT\"}}"
 
     def add_arguments(self, parser):
         parser.add_argument('parameter', nargs='+', type=str)
@@ -36,17 +39,28 @@ class Command(BaseCommand):
         parameter_json["URL"] += '&id=%s' % id_programa
         message_title = '%s, a las %s' % (title, start_time)
 
-        tweet = '%s, a las %s, en %s. %s.' % (title, start_time, channelName,
-                                              'https://pelisdeldiaco78.app.link/?programId=%s' % id_programa)
+        print('generating link')
+        bodyDict = json.loads(self.dynamic_link_json)
+        link = bodyDict["dynamicLinkInfo"]["link"] % id_programa
+        bodyDict["dynamicLinkInfo"]["link"] = link
+        link = self.generate_dynamic_link(json.dumps(bodyDict))
+
+        tweet = '%s, a las %s, en %s. %s.' % (title, start_time, channelName, link)
         self.post_tweet(image, tweet)
 
-        for device in TvGCMDevice.objects.filter(version__gte=25):
-            # self.stdout.write(device.registration_id)
-            if device.registration_id != "BLACKLISTED":
-                device.send_message(parameter_str)
+        gcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="GCM")\
+            .exclude(registration_id="BLACKLISTED")
+        gcm_devices.send_message(parameter_str)
 
-        for device in TvAPNSDevice.objects.filter(version__gte=25):
-            device.send_message(message_title, sound='default', extra={"message": parameter_str})
+        fcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="FCM") \
+            .exclude(registration_id="BLACKLISTED")
+        fcm_devices.send_message(parameter_str, use_fcm_notifications=False)
+
+        apn_devices = TvAPNSDevice.objects.filter(version__gte=25)
+        apn_devices.send_message(message_title, sound='default', extra={"message": parameter_str})
+
+        # for device in TvAPNSDevice.objects.filter(version__gte=25):
+        #     device.send_message(message_title, sound='default', extra={"message": parameter_str})
 
     def get_twitter_api(self, cfg):
         auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
@@ -76,3 +90,19 @@ class Command(BaseCommand):
             print('image downloading failed, default tweet')
             status = api.update_status(status=message)
             print(status)
+
+    def generate_dynamic_link(self, body):
+        url = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBslo51LLKYhjKCS9rlrrCoi7HvE3HbhJw"
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        data = body
+
+        r = requests.post(url, headers=headers, data=data)
+        print(r.status_code)
+        print(r.json())
+        if r.status_code == 200:
+            result = r.json()
+            return result['shortLink']
+        else:
+            return ""

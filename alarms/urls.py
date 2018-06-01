@@ -9,7 +9,7 @@ router.register(r'device/apns', TvAlarmApnsDeviceViewSet)
 router.register(r'device/gcm', TvAlarmDeviceViewSet)
 
 urlpatterns = (url(r'^', include(router.urls)),
-               url(r'^admin/', include(admin.site.urls)),
+               url(r'^admin/', admin.site.urls),
                url(r'device/send_push_post_tweet', views.send_push_post_tweet),
                url(r'device/post_tweet', views.post_tweet_view),
                url(r'device/send_push', views.send_push_view),
