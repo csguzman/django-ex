@@ -50,14 +50,14 @@ class Command(BaseCommand):
 
         gcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="GCM")\
             .exclude(registration_id="BLACKLISTED")
-        gcm_devices.send_message(parameter_str)
+        gcm_devices.send_message(parameter_str, extra={"image": image})
 
         fcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="FCM") \
             .exclude(registration_id="BLACKLISTED")
-        fcm_devices.send_message(parameter_str, use_fcm_notifications=False)
+        fcm_devices.send_message(parameter_str, use_fcm_notifications=False, extra={"image": image})
 
         apn_devices = TvAPNSDevice.objects.filter(version__gte=25)
-        apn_devices.send_message(message_title, sound='default', extra={"message": parameter_str})
+        apn_devices.send_message(message_title, sound='default', extra={"message": parameter_str, "image": image})
 
         # for device in TvAPNSDevice.objects.filter(version__gte=25):
         #     device.send_message(message_title, sound='default', extra={"message": parameter_str})
