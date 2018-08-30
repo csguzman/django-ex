@@ -57,7 +57,8 @@ class Command(BaseCommand):
         fcm_devices.send_message(parameter_str, use_fcm_notifications=False, extra={"image": image})
 
         apn_devices = TvAPNSDevice.objects.filter(version__gte=25)
-        apn_devices.send_message(message_title, sound='default', extra={"message": parameter_str, "image": image})
+        apn_devices.send_message(message_title, sound='default', category='PelisDelDia', mutable_content=1, extra={"message": parameter_str, "image": image})
+
 
         # for device in TvAPNSDevice.objects.filter(version__gte=25):
         #     device.send_message(message_title, sound='default', extra={"message": parameter_str})
