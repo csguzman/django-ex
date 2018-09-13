@@ -33,8 +33,12 @@ class Command(BaseCommand):
         title = parameter_json['TITULO']
         id_programa = parameter_json['EVENTO']
         channelName = parameter_json['channelName']
-        start_time = parameter_json['startTime']
-        image = parameter_json['image']
+        start_time = parameter_json['HORA_INICIO']
+        if 'tweetImage' in parameter_json and len(parameter_json["tweetImage"]) != 0:
+            tweet_image = parameter_json['tweetImage']
+
+        if 'pushImage' in parameter_json and len(parameter_json["pushImage"]) != 0:
+            push_image = parameter_json['pushImage']
 
         parameter_json["URL"] += '&id=%s' % id_programa
         message_title = '%s, a las %s' % (title, start_time)
@@ -50,14 +54,14 @@ class Command(BaseCommand):
 
         gcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="GCM")\
             .exclude(registration_id="BLACKLISTED")
-        gcm_devices.send_message(parameter_str, extra={"image": image})
+        gcm_devices.send_message(parameter_str, extra={"image": push_image})
 
         fcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="FCM") \
             .exclude(registration_id="BLACKLISTED")
-        fcm_devices.send_message(parameter_str, use_fcm_notifications=False, extra={"image": image})
+        fcm_devices.send_message(parameter_str, use_fcm_notifications=False, extra={"image": push_image})
 
         apn_devices = TvAPNSDevice.objects.filter(version__gte=25)
-        apn_devices.send_message(message_title, sound='default', category='PelisDelDia', mutable_content=1, extra={"message": parameter_str, "image": image})
+        apn_devices.send_message(message_title, sound='default', category='PelisDelDia', mutable_content=1, extra={"message": parameter_str, "image": push_image})
 
 
         # for device in TvAPNSDevice.objects.filter(version__gte=25):
