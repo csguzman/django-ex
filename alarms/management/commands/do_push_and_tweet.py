@@ -50,7 +50,7 @@ class Command(BaseCommand):
         link = self.generate_dynamic_link(json.dumps(bodyDict))
 
         tweet = '%s, a las %s, en %s. %s.' % (title, start_time, channelName, link)
-        self.post_tweet(image, tweet)
+        self.post_tweet(tweet_image, tweet)
 
         gcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="GCM")\
             .exclude(registration_id="BLACKLISTED")
