@@ -11,7 +11,8 @@ import json
 
 @user_passes_test(lambda u: u.is_superuser)
 def post_tweet_view(request):
-    execute_in_background('post_tweet')
+    parameter = json.dumps(request.GET)
+    execute_in_background('post_tweet', parameter)
     return HttpResponse(status=200)
 
 
