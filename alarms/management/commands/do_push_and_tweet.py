@@ -39,6 +39,10 @@ class Command(BaseCommand):
 
         if 'pushImage' in parameter_json and len(parameter_json["pushImage"]) != 0:
             push_image = parameter_json['pushImage']
+        elif 'tweetImage' in parameter_json and len(parameter_json["tweetImage"]) != 0:
+            push_image = parameter_json['tweetImage']
+        else:
+            push_image = ''
 
         parameter_json["URL"] += '&id=%s' % id_programa
         message_title = '%s, a las %s' % (title, start_time)
