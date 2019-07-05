@@ -12,6 +12,7 @@ urlpatterns = (url(r'^', include(router.urls)),
                url(r'^admin/', admin.site.urls),
                url(r'device/send_push_post_tweet', views.send_push_post_tweet),
                url(r'device/post_tweet', views.post_tweet_view),
+               url(r'device/post_facebook_page', views.post_facebook_page_view),
                url(r'device/send_push', views.send_push_view),
                url(r'device/do_push_tweet', views.do_push_and_tweet),
                url(r'program_details', views.get_program_details),)

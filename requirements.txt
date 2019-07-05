@@ -14,8 +14,9 @@ oauthlib==2.0.2
 packaging==16.8
 pyparsing==2.2.0
 pytz==2017.2
-requests==2.18.1
+requests==2.21.0
 requests-oauthlib==0.8.0
 six==1.10.0
 tweepy==3.5.0
 urllib3==1.21.1
+facebook-sdk==3.1.0

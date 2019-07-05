@@ -17,6 +17,13 @@ def post_tweet_view(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+def post_facebook_page_view(request):
+    parameter = json.dumps(request.GET)
+    execute_in_background('post_facebook_page', parameter)
+    return HttpResponse(status=200)
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def send_push_view(request):
     execute_in_background('sendpush')
     return HttpResponse(status=200)
