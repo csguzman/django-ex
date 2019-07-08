@@ -70,13 +70,7 @@ class Command(BaseCommand):
 
         except facebook.GraphAPIError as e:
             print(e)
-            print('image downloading failed, default tweet')
-            status = api.update_status(status=message)
-            print(status)
-
-
-
-
+            print('Facebook post failed')
 
     @staticmethod
     def generate_dynamic_link(body):

@@ -3,6 +3,7 @@ from urllib.request import urlopen, HTTPError
 import requests
 
 import tweepy
+import facebook
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -12,10 +13,13 @@ from alarms.models import TvGCMDevice, TvAPNSDevice
 class Command(BaseCommand):
     channels = None
     channel_list_json = None
-    default_channels = ['La 1', 'La 2', 'Antena 3', 'Cuatro', 'Telecinco', 'laSexta', 'Teledeporte', 'Clan TVE', 'Canal 24 horas', 'Nova', 'Neox', 'Mega', 'FDF Telecinco', 'Energy', 'Divinity', 'Boing', 'Disney Channel', 'Intereconomía TV', 'Paramount Channel', '13tv', 'Discovery MAX', 'Atreseries', 'Be Mad']
-    image_url = 'https://programacion-tv.elpais.com/%s'
-
     dynamic_link_json = "{\"dynamicLinkInfo\": {\"dynamicLinkDomain\": \"e2ays.app.goo.gl\",\"link\": \"https://pelisdeldia.com/?programId=%s\",\"androidInfo\": {\"androidPackageName\": \"com.csalguero.onlymovies\",\"androidFallbackLink\": \"https://play.google.com/store/apps/details?id=com.csalguero.onlymovies\"},\"iosInfo\": {\"iosBundleId\": \"com.csalguero.onlymovies\",\"iosFallbackLink\": \"https://itunes.apple.com/es/app/apple-store/id1235072016\",\"iosAppStoreId\": \"1235072016\"}},\"suffix\": {\"option\": \"SHORT\"}}"
+    facebook_cfg = {
+        "page_id": "676790769407022",  # Step 1
+        "access_token": "EAAEu8EX3lxgBAL0K3Uq0dmSkm8PVNxQDhvP5LRyzZCYbElC1JjfZAA1frgXMZAQyIbEdHnXkQyyF0p9WgzxkaH0inDI4JRSgOSixh7caZA5mNBUn6a1CglS8LgCgHjlmOVI4vpi0jCoSl3j3farpBUGHMRObf8wW5xmeDiZAiZCQZDZD",
+        # Step 3
+        "page_access_token": "EAAEu8EX3lxgBAMyQRbq2E3iNbM4srYWCQfsFjYuv4Sz27ep3hm3wS95RaT3hKVcITGDMkXLvxNuceGsaFgl62jHGmO3u7C53ztbGR7WHt6UnPOu8x3ZBpVk7e62o3ghbTyZASUc66XKsgT6mpqD9VlvyCp24UTMbPpNZBB8KbX1CEHkpktW"
+    }
 
     def add_arguments(self, parser):
         parser.add_argument('parameter', nargs='+', type=str)
@@ -31,6 +35,7 @@ class Command(BaseCommand):
         self.stdout.write('parameters:  %s' % parameter_str)
         parameter_json = json.loads(parameter_str)
         title = parameter_json['TITULO']
+        description = parameter_json['description']
         id_programa = parameter_json['EVENTO']
         channelName = parameter_json['channelName']
         start_time = parameter_json['HORA_INICIO']
@@ -56,6 +61,12 @@ class Command(BaseCommand):
         tweet = '%s, a las %s, en %s. %s.' % (title, start_time, channelName, link)
         self.post_tweet(tweet_image, tweet)
 
+        post = """%s, a las %s, en %s. %s.
+        Sinopsis:
+        %s
+        """ % (title, start_time, channelName, link, description)
+        self.post_facebook_page(tweet_image, post)
+
         gcm_devices = TvGCMDevice.objects.filter(version__gte=25, cloud_message_type="GCM")\
             .exclude(registration_id="BLACKLISTED")
         gcm_devices.send_message(parameter_str, extra={"image": push_image})
@@ -66,10 +77,6 @@ class Command(BaseCommand):
 
         apn_devices = TvAPNSDevice.objects.filter(version__gte=25)
         apn_devices.send_message(message_title, sound='default', category='PelisDelDia', mutable_content=1, extra={"message": parameter_str, "image": push_image})
-
-
-        # for device in TvAPNSDevice.objects.filter(version__gte=25):
-        #     device.send_message(message_title, sound='default', extra={"message": parameter_str})
 
     def get_twitter_api(self, cfg):
         auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
@@ -100,6 +107,26 @@ class Command(BaseCommand):
             status = api.update_status(status=message)
             print(status)
 
+    def post_facebook_page(self, image_url, message):
+        api = self.get_api(self.facebook_cfg)
+
+        filename = settings.TMP_DIR + 'temp.jpg'
+        try:
+            response = urlopen(image_url)
+            with open(filename, "wb") as imgFile:
+                imgFile.write(response.read())
+
+            # status = api.put_photo(image=filename, message=message)
+            status = api.put_photo(open(filename, 'rb'), message=message)
+            # post_status = api.put_object(parent_object="me",
+            #                              connection_name="feed",
+            #                              message=message)
+            print(status)
+
+        except facebook.GraphAPIError as e:
+            print(e)
+            print('Facebook post failed')
+
     def generate_dynamic_link(self, body):
         url = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBslo51LLKYhjKCS9rlrrCoi7HvE3HbhJw"
         headers = {
@@ -115,3 +142,8 @@ class Command(BaseCommand):
             return result['shortLink']
         else:
             return ""
+
+    @staticmethod
+    def get_api(cfg):
+        graph = facebook.GraphAPI(cfg['page_access_token'])
+        return graph
